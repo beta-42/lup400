@@ -31,7 +31,7 @@ pub async fn serve_content(req: HttpRequest) -> Result<NamedFile> {
         let page_404 = config["error_pages"]["404"].to_string().replace("\"", "");
         status_code = StatusCode::NOT_FOUND;
         format!("{}/{}", TEMPLATE_DIR, page_404)
-    } else if routes == "comment" {
+    } else if routes == "comment.html" {
         println!("Bacon");
 
         let mut file = OpenOptions::new()

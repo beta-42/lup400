@@ -7,7 +7,7 @@
   "follow_symlinks": false,
   "routes": {
     "/": "index.html",
-    "/comment": "comment"
+    "/comment": "comment.html"
   },
   "server": {
     "host": "127.0.0.1",
