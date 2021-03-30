@@ -7,7 +7,8 @@
   "follow_symlinks": false,
   "routes": {
     "/": "index.html",
-    "/comment": "comment.html"
+    "/comment": "comment.html",
+    "/read": "read.html"
   },
   "server": {
     "host": "127.0.0.1",
