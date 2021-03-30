@@ -8,6 +8,9 @@ use actix_web::{HttpRequest, Result};
 
 use crate::config::get_config;
 
+use std::fs::OpenOptions;
+use std::io::prelude::*;
+
 // directory of rendered templates
 static TEMPLATE_DIR: &str = "rendered_templates";
 
@@ -28,6 +31,22 @@ pub async fn serve_content(req: HttpRequest) -> Result<NamedFile> {
         let page_404 = config["error_pages"]["404"].to_string().replace("\"", "");
         status_code = StatusCode::NOT_FOUND;
         format!("{}/{}", TEMPLATE_DIR, page_404)
+    } else if routes == "comment" {
+        println!("Bacon");
+
+        let mut file = OpenOptions::new()
+        .write(true)
+        .append(true)
+        .open("static/comments.txt")
+        .unwrap();
+
+        if let Err(e) = writeln!(file, "A new line!") {
+            eprintln!("Couldn't write to file: {}", e);
+        }
+
+
+        status_code = StatusCode::OK;
+        format!("{}/{}", TEMPLATE_DIR, routes)
     } else {
         status_code = StatusCode::OK;
         format!("{}/{}", TEMPLATE_DIR, routes)
