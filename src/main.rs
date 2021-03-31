@@ -92,6 +92,7 @@ async fn main() -> std::io::Result<()> {
                         .use_last_modified(true)
                 )
                 // serve static files
+                .route("/{route:.*}/{comment}", web::get().to(serve_content))
                 .route("/{route:.*}", web::get().to(serve_content))
         }
     })

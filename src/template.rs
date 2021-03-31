@@ -26,6 +26,11 @@ fn engine_write_templates(templates: serde_json::map::Iter) -> std::io::Result<(
     for (_key, value) in templates {
         let filename = value.to_string().replace("\"", "");
 
+        // don't want to loose comments on a reboot
+        if filename == "read.html" {
+            continue;
+        }
+
         let file_path = format!("{}/{}", static_dir, filename);
         let static_file = fs::File::open(file_path)?;
         let mut buf_reader = BufReader::new(static_file);

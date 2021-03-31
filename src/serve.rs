@@ -14,6 +14,8 @@ use std::fs::File;
 use std::io::{self, BufRead};
 use std::path::Path;
 
+use htmlescape;
+
 // directory of rendered templates
 static TEMPLATE_DIR: &str = "rendered_templates";
 
@@ -35,19 +37,23 @@ pub async fn serve_content(req: HttpRequest) -> Result<NamedFile> {
         status_code = StatusCode::NOT_FOUND;
         format!("{}/{}", TEMPLATE_DIR, page_404)
     } else if routes == "comment.html" {
-        let comment = format!("/{}", req.match_info().query("comment"));
+        let comment = req.match_info().get("comment").unwrap_or("");
         println!("{}", comment);
 
-        let mut file = OpenOptions::new()
-        .write(true)
-        .append(true)
-        .open("rendered_templates/read.html")
-        .unwrap();
-
-        let new_line = String::from("<div class=\"pt-6 md:grid md:grid-cols-12 md:gap-8\"><dd class=\"mt-2 md:mt-0 md:col-span-12\"><p class=\"text-base text-white\">TEST</p></dd></div>");
-
-        if let Err(e) = writeln!(file, "{}", new_line) {
-            eprintln!("Couldn't write to file: {}", e);
+        if comment.trim() == "" {
+            // no blank spam allowed
+        } else {
+            let mut file = OpenOptions::new()
+            .write(true)
+            .append(true)
+            .open("rendered_templates/read.html")
+            .unwrap();
+    
+            let new_line = format!("<div class=\"pt-6 md:grid md:grid-cols-12 md:gap-8\"><dd class=\"mt-2 md:mt-0 md:col-span-12\"><p class=\"text-base text-white\">{}</p></dd></div>", htmlescape::encode_minimal( &comment ) );
+    
+            if let Err(e) = writeln!(file, "{}", new_line) {
+                eprintln!("Couldn't write to file: {}", e);
+            }
         }
         status_code = StatusCode::OK;
         format!("{}/{}", TEMPLATE_DIR, routes)
