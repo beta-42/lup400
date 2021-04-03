@@ -10,9 +10,6 @@ use crate::config::get_config;
 
 use std::fs::OpenOptions;
 use std::io::prelude::*;
-use std::fs::File;
-use std::io::{self, BufRead};
-use std::path::Path;
 
 use htmlescape;
 
@@ -58,16 +55,6 @@ pub async fn serve_content(req: HttpRequest) -> Result<NamedFile> {
         status_code = StatusCode::OK;
         format!("{}/{}", TEMPLATE_DIR, routes)
     } else if routes == "read.html" {
-        println!("read");
-
-        if let Ok(lines) = read_lines("static/comments.txt") {
-            // Consumes the iterator, returns an (Optional) String
-            for line in lines {
-                if let Ok(ip) = line {
-                    println!("{}", ip);
-                }
-            }
-        }
         status_code = StatusCode::OK;
         format!("{}/{}", TEMPLATE_DIR, routes)
     } else {
@@ -79,12 +66,4 @@ pub async fn serve_content(req: HttpRequest) -> Result<NamedFile> {
         .set_status_code(status_code)
         .prefer_utf8(true)
         .use_last_modified(true))
-}
-
-// The output is wrapped in a Result to allow matching on errors
-// Returns an Iterator to the Reader of the lines of the file.
-fn read_lines<P>(filename: P) -> io::Result<io::Lines<io::BufReader<File>>>
-where P: AsRef<Path>, {
-    let file = File::open(filename)?;
-    Ok(io::BufReader::new(file).lines())
 }
