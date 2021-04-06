@@ -138,7 +138,7 @@
 	</body>
 	<script>
 		$( document ).ready(function() {
-    		$( "#comments" ).load( "/read" );
+    		$( "#comments" ).load( "/read?" + Date.now() );
 		});
 
 		function postComment() {
